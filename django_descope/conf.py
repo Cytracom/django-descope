@@ -36,6 +36,9 @@ class Settings:
     DESCOPE_IS_SUPERUSER_ROLE = "is_superuser"
     """ Role name for superuser users in Descope. """
 
+    DESCOPE_USER_MODEL = "django_descope.DescopeUser"
+    """ DescopeUser Model used in this project.  Custom DescopeUser Models should extend the provided default. """
+
     DESCOPE_USERNAME_CLAIM = "sub"
     """
         JWT claim used for the username. Must be unique to avoid user merges

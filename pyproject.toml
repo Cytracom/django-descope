@@ -43,6 +43,13 @@ python = ">=3.9,<4.0"
 Django = ">=3.2.19,<5.2"
 descope = "^1.5.1"
 
+# A list of all of the optional dependencies, some of which are included in the
+# below `extras`. They can be opted into by apps.
+djangorestframework = { version = ">=3.12.4,<4", optional = true }
+
+[tool.poetry.extras]
+restframework = ["djangorestframework"]
+
 [tool.poetry.group.dev.dependencies]
 flake8 = "7.1.2"
 black = "25.1.0"
