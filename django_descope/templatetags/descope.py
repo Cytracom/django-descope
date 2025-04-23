@@ -14,17 +14,24 @@ CONTEXT_KEY = "descope_wc_included"
 
 
 @register.simple_tag(takes_context=True)
-def descope_flow(context, flow_id, success_redirect):
+def descope_flow(context, flow_id, success_redirect, wc_extra_args=""):
     script = ""
     if not context.get(CONTEXT_KEY):
         script += f'<script src="{settings.DESCOPE_WEB_COMPONENT_SRC}"></script>'
         context[CONTEXT_KEY] = True
     id = "descope-" + get_random_string(length=4)
     store_jwt_url = reverse("django_descope:store_jwt")
+
+    descope_wc_kwargs = {
+        "id": id,
+        "project-id": settings.DESCOPE_PROJECT_ID,
+        "flow-id": flow_id,
+        "redirect-url": context.request.build_absolute_uri(),
+        "base-url": os.environ.get("DESCOPE_BASE_URI", ""),
+    }
+
     flow = f"""
-    <descope-wc id="{id}" project-id="{settings.DESCOPE_PROJECT_ID}"
-     flow-id="{flow_id}" redirect-url="{context.request.build_absolute_uri()}"
-        base-url="{os.environ.get('DESCOPE_BASE_URI', '')}"></descope-wc>
+    <descope-wc {" ".join(f"{k}={v}" for k, v in descope_wc_kwargs.items())} {wc_extra_args}></descope-wc>
     <script>
         const descopeWcEle = document.getElementById('{id}');
         descopeWcEle.addEventListener('success', async (e) => {{
