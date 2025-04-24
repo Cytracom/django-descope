@@ -10,10 +10,7 @@ from django_descope.conf import settings
 logger = logging.getLogger(__name__)
 
 
-class DescopeUser(auth.get_user_model()):  # type: ignore
-    class Meta:
-        proxy = True
-
+class BaseDescopeUser:
     is_active = True
     """ User is always active since Descope will never issue a token for an inactive user. """
 
@@ -40,3 +37,7 @@ class DescopeUser(auth.get_user_model()):  # type: ignore
     def get_username(self):
         username_field = getattr(self, "USERNAME_FIELD", "username")
         return getattr(self, username_field)
+
+class DescopeUser(BaseDescopeUser, auth.get_user_model()):  # type: ignore
+    class Meta:
+        proxy = True
