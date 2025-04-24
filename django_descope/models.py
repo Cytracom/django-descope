@@ -28,14 +28,15 @@ class DescopeUser(auth.get_user_model()):  # type: ignore
         self.save()
 
     def __str__(self):
-        return f"DescopeUser {self.username}"
+        return f"DescopeUser {self.get_username()}"
 
     @property
     def _me(self):
         return cache.get_or_set(
-            f"descope_me:{self.username}",  # noqa: E231
+            f"descope_me:{self.get_username()}",  # noqa: E231
             lambda: descope_client.me(self.refresh_token),
         )
 
     def get_username(self):
-        return self.username
+        username_field = getattr(self, "USERNAME_FIELD", "username")
+        return getattr(self, username_field)
