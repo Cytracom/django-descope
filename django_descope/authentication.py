@@ -7,9 +7,8 @@ from django.contrib.auth import logout
 from django.contrib.auth.backends import BaseBackend
 from django.http import HttpRequest
 
-from django_descope import descope_client
+from django_descope import descope_client, get_descope_user_model
 from django_descope.conf import settings
-from django_descope.models import DescopeUser
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +61,10 @@ class DescopeAuthentication(BaseBackend):
                     raise
                 return None
 
-            user, _ = DescopeUser.objects.get_or_create(username=username)
+            DescopeUserModel = get_descope_user_model()
+            username_field = getattr(DescopeUserModel, "USERNAME_FIELD", "username")
+
+            user, _ = DescopeUserModel.objects.get_or_create(**{username_field: username})
             user.sync(validated_session, refresh_token)
             request.session[SESSION_COOKIE_NAME] = user.session_token["jwt"]
             return user
