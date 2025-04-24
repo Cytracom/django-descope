@@ -15,6 +15,7 @@ CONTEXT_KEY = "descope_wc_included"
 
 @register.simple_tag(takes_context=True)
 def descope_flow(context, flow_id, success_redirect, wc_extra_args=""):
+    print(context, flow_id, success_redirect, wc_extra_args)
     script = ""
     if not context.get(CONTEXT_KEY):
         script += f'<script src="{settings.DESCOPE_WEB_COMPONENT_SRC}"></script>'
