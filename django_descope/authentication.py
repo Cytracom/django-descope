@@ -23,7 +23,7 @@ class DescopeAuthentication(BaseBackend):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def authenticate(self, request: Union[HttpRequest, None], *args, **kwargs):
+    def authenticate(self, request: Union[HttpRequest, None], *args, skip_logout=False, **kwargs):
         if request is None:
             return None
         session_token = request.session.get(SESSION_COOKIE_NAME, "")
@@ -42,7 +42,8 @@ class DescopeAuthentication(BaseBackend):
             ensure logging out an invalid user.
             """
             logger.debug(e)
-            logout(request)
+            if not skip_logout:
+                logout(request)
             return None
 
         if settings.DEBUG:

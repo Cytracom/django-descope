@@ -46,7 +46,7 @@ class DescopeSessionAuthentication(authentication.BaseAuthentication):
     _auth = DescopeAuthentication()
 
     def authenticate(self, request):
-        user = self._auth.authenticate(request)
+        user = self._auth.authenticate(request, skip_logout=True)
         if user:
             token = request.session.get(SESSION_COOKIE_NAME, "")
             return user, token
