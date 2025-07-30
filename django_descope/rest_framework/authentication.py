@@ -1,6 +1,6 @@
 import logging
 
-from descope import SESSION_COOKIE_NAME, SESSION_TOKEN_NAME
+from descope import SESSION_COOKIE_NAME, SESSION_TOKEN_NAME, REFRESH_SESSION_COOKIE_NAME
 from descope.exceptions import AuthException
 from rest_framework import authentication, exceptions
 
@@ -46,8 +46,9 @@ class DescopeSessionAuthentication(authentication.BaseAuthentication):
     _auth = DescopeAuthentication()
 
     def authenticate(self, request):
+        request.session[SESSION_COOKIE_NAME] = request.COOKIES.get(SESSION_COOKIE_NAME, "")
+        request.session[REFRESH_SESSION_COOKIE_NAME] = request.COOKIES.get(REFRESH_SESSION_COOKIE_NAME, "")
         user = self._auth.authenticate(request, skip_logout=True)
         if user:
             token = request.session.get(SESSION_COOKIE_NAME, "")
             return user, token
-        raise exceptions.AuthenticationFailed("Invalid cookie.")
