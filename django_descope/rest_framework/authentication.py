@@ -1,4 +1,5 @@
 import logging
+from typing import Iterable
 
 from descope import SESSION_COOKIE_NAME, SESSION_TOKEN_NAME, REFRESH_SESSION_COOKIE_NAME
 from descope.exceptions import AuthException
@@ -15,9 +16,9 @@ logger = logging.getLogger(__name__)
 class DescopeTokenAuthentication(authentication.TokenAuthentication):
     keyword = "Bearer"
 
-    def authenticate_credentials(self, token):
+    def authenticate_credentials(self, token, audience: str | Iterable[str] | None = None):
         try:
-            validated_session = descope_client.validate_session(token)
+            validated_session = descope_client.validate_session(token, audience=audience)
         except AuthException as e:
             logger.debug(e)
             raise exceptions.AuthenticationFailed("Invalid token.")
