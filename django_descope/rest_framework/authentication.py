@@ -38,7 +38,13 @@ class DescopeTokenAuthentication(authentication.TokenAuthentication):
         DescopeUserModel = get_descope_user_model()
         username_field = getattr(DescopeUserModel, "USERNAME_FIELD", "username")
 
-        user, _ = DescopeUserModel.objects.get_or_create(**{username_field: username})
+
+        print(DescopeUserModel)
+        print(f"username_field {username_field}")
+
+        user, created = DescopeUserModel.objects.get_or_create(**{username_field: username})
+        print(f"user {user}, created {created}")
+
         user.sync(validated_session)
         return user, token
 
